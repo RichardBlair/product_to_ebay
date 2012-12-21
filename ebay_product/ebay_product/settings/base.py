@@ -9,17 +9,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'ebay_product',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -125,11 +114,6 @@ AUTHENTICATION_BACKENDS = (
                     )
 
 CUSTOM_USER_MODEL = 'shopify.Shop'
-
-SHOPIFY_API_KEY = "44b4a09c8704b038d0910c3c17913a5f"
-SHOPIFY_SHARED_SECRET = "b1f546b1b700e587acd102b4b66bb2ce"
-
-DOMAIN = "http://example.com:8000"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
