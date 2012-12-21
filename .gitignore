@@ -1,2 +1,3 @@
 .*.swp
 *.pyc
+ebay_product/ebay_product/settings/private.py
