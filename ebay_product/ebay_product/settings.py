@@ -11,8 +11,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'ebay_product',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -115,11 +115,21 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'south',
+    'shopify',
+    'django.contrib.admin'
 )
+
+AUTHENTICATION_BACKENDS = (
+                    'shopify.auth.ShopBackend',
+                    )
+
+CUSTOM_USER_MODEL = 'shopify.Shop'
+
+SHOPIFY_API_KEY = "44b4a09c8704b038d0910c3c17913a5f"
+SHOPIFY_SHARED_SECRET = "b1f546b1b700e587acd102b4b66bb2ce"
+
+DOMAIN = "http://example.com:8000"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

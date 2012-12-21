@@ -5,7 +5,8 @@ import requests
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
 from django.views.generic import View
-from django.http import Http404, HttpResponseForbidden, HttpResponseRedirect
+from django.http import (Http404, HttpResponseForbidden, HttpResponseRedirect,
+                            HttpResponse)
 from django.conf import settings
 from django.utils import simplejson
 
@@ -68,7 +69,19 @@ class ShopifyView(View, ShopifyMixin):
             return HttpResponseRedirect('/')
         #If the shop is not in the databse, go through the install process
         except Shop.DoesNotExist:
-            return HttpResponseRedirect('/shopify/auth?shop=%s' % request.GET['shop'])
+            url_params = {'shop': request.GET['shop']}
+            redirect_url = '%s/?%s' % (reverse('shopify.auth'),
+                    urllib.urlencode(url_params))
+            return HttpResponseRedirect(redirect_url)
+
+
+class InstallView(View):
+    """
+    This view will create the charge.
+    """
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse()
 
 
 class AuthView(View, ShopifyMixin):
@@ -140,5 +153,7 @@ class AuthCallbackView(View, ShopifyMixin):
             if shop is None:
                 return HttpResponseForbidden()
             login(request, shop)
+
+            return HttpResponseRedirect(reverse('shopify.install'))
         except KeyError:
             return HttpResponseForbidden()
