@@ -1,12 +1,12 @@
 from django.conf.urls import patterns, include, url
-
+from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
+from ebay_product import  views
+
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'ebay_product.views.home', name='home'),
-    # url(r'^ebay_product/', include('ebay_product.foo.urls')),
+    url(r'^install/?$', login_required(views.InstallView.as_view()), name='install'),
     url(r'^shopify/', include('shopify.urls')),
 
 
