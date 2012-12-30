@@ -6,19 +6,23 @@ import requests
 API_ENDPOINTS = {
             'createRecurringCharge': {
                     'method': 'post',
-                    'endpoint': 'https://%s/admin/recurring_application_charges.json'
+                    'endpoint': 'https://%(shop)s/admin/recurring_application_charges.json'
                 },
             'getRecurringCharge': {
                     'method': 'get',
-                    'endpoint': 'https://%s/admin/recurring_application_charges/%(id)s.json'
+                    'endpoint': 'https://%(shop)s/admin/recurring_application_charges/%(id)s.json'
                 },
             'getRecurringCharges': {
                     'method': 'get',
-                    'endpoint': 'https://%s/admin/recurring_application_charges.json'
+                    'endpoint': 'https://%(shop)s/admin/recurring_application_charges.json'
+                },
+            'activateRecurringCharge': {
+                    'method': 'post',
+                    'endpoint': 'https://%(shop)s/admin/recurring_application_charges/%(id)s/activate.json'
                 },
             'getProducts': {
                     'method': 'get',
-                    'endpoint': 'https://%s/admin/products.json'
+                    'endpoint': 'https://%(shop)s/admin/products.json'
                 },
         }
 
@@ -50,7 +54,7 @@ class Shoppy(object):
         """
         try:
             api_method = API_ENDPOINTS[name]
-            return self._make_request(api_method['endpoint'] % self.shop,
+            return self._make_request(api_method['endpoint'],
                     api_method['method'])
         except KeyError:
             raise AttributeError("'Shoppy' object has no attribute '%s'" % name)
@@ -80,15 +84,22 @@ class Shoppy(object):
                 The response in the form of a dictionary
             """
             headers = {
-                    'X-Shopify-Access-Token': self.access_token
+                    'X-Shopify-Access-Token': self.access_token,
+                    'Content-Type': 'application/json'
                 }
 
+            kwargs.update({'shop': self.shop})
+            api_url = url % kwargs
+
             if method == 'get':
-                resp = requests.get(url, headers=headers,
+                resp = requests.get(api_url, headers=headers,
                         params=kwargs.get('params'))
             elif method == 'post':
-                resp = request.post(url, headers=headers,
-                        data=kwargs.get('data'), params=kwargs.get('params'))
+                resp = requests.post(api_url, headers=headers,
+                        data=simplejson.dumps(kwargs.get('data')),
+                        params=kwargs.get('params'))
+                if resp.status_code == 200 and len(resp.content.strip()) == 0:
+                    return {}
 
             return simplejson.loads(resp.content)
 

@@ -104,9 +104,10 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
     'south',
     'shopify',
-    'django.contrib.admin'
+    'ebay_product'
 )
 
 AUTHENTICATION_BACKENDS = (
