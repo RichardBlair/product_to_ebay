@@ -1,4 +1,5 @@
 from django.http import HttpResponseRedirect
+from django.utils.datastructures import MultiValueDictKeyError
 from django.core.urlresolvers import reverse
 from django.views.generic import View, TemplateView
 from django.conf import settings
@@ -26,7 +27,7 @@ class InstallView(View):
             shop.activateRecurringCharge(id=charge.charge_id)
             charge.status = 1
             charge.save()
-        except ApplicationCharge.DoesNotExist:
+        except (ApplicationCharge.DoesNotExist, MultiValueDictKeyError):
             charge = {
                         'recurring_application_charge': {
                                 'name': 'eBay lister',

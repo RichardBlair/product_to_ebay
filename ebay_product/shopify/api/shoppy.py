@@ -37,7 +37,7 @@ class Shoppy(object):
         self.access_token = access_token
         self.shop = shop
 
-    def __getattr__(self, name):
+    def __getattribute__(self, name):
         """
         This method will try to find 'name' in the API_ENDPOINT dictionary and
         return a dynamic request method that will make accessing the API possible.
@@ -47,7 +47,9 @@ class Shoppy(object):
                     raise an error for or create a request method for.
 
         Returns:
-            A request method which will be used to call the desired endpoint.
+            If name is in API_ENDPOINTS a request method which will be used to
+            call the desired endpoint. Otherwise the requested name will be
+            returned if it exists.
 
         Raises:
             AttributeError - When name is not in the dictionary
@@ -57,7 +59,7 @@ class Shoppy(object):
             return self._make_request(api_method['endpoint'],
                     api_method['method'])
         except KeyError:
-            raise AttributeError("'Shoppy' object has no attribute '%s'" % name)
+            return super(Shoppy, self).__getattribute__(name)
 
     def _make_request(self, url, method):
         """
