@@ -40,7 +40,7 @@ class InstallView(View):
             resp = shop.createRecurringCharge(data=charge)
 
             #This could raise a key error, and im not catching it on purpose.
-            #If a person is having a problem signing up I want it to obe very loud.
+            #If a person is having a problem signing up I want it to be very loud.
             ApplicationCharge.objects.create(shop=request.user,
                     price=charge['recurring_application_charge']['price'],
                     name=charge['recurring_application_charge']['name'],
