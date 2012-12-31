@@ -3,6 +3,11 @@ from django.db import models
 from shopify.models import Shop
 
 
+class EbaySettings(models.Model):
+    token = models.CharField(max_length=200)
+    shop = models.ForeignKey(Shop)
+
+
 class ApplicationCharge(models.Model):
     CHARGE_STATUS = (
         (1, 'Active'),
