@@ -1,0 +1,10 @@
+<html>
+    <head>
+        <title>Publish Products to eBay!</title>
+    </head>
+    <body>
+        {% if ebay_sessionid %}
+            <p><a href="https://signin.sandbox.ebay.com/ws/eBayISAPI.dll?SignIn&RuName={{ebay_ru_name}}&SessID={{ebay_sessionid.SessionID}}">Click Here</a> to setup your eBay account.</p>
+        {% endif %}        
+    </body>
+</html>
