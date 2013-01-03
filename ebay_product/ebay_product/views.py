@@ -5,9 +5,9 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from ebaysuds import EbaySuds
+import redis
 
 from shopify.api import Shoppy
-from shopify.models import Shop
 
 from ebay_product.forms import ActivateChargeForm, CreateChargeForm
 from ebay_product.models import EbaySettings
@@ -82,7 +82,25 @@ class RootView(TemplateView):
             ebay_settings.session_id = ebay.GetSessionID(RuName=settings.EBAY_RU_NAME).SessionID
             ebay_settings.save()
 
+        products = get_products(self.request.user)
+
         return {
                 'ebay_settings': ebay_settings,
-                'ebay_ru_name': settings.EBAY_RU_NAME
+                'ebay_ru_name': settings.EBAY_RU_NAME,
+                'shopify_products': products
             }
+
+
+def get_products(shop):
+    redis_con = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
+            db=settings.REDIS_DB)
+
+    products = redis_con.get('%s:products' % shop.myshopify_domain)
+    if products is None:
+        shoppy = Shoppy(access_token=shop.access_token,
+                shop=shop.myshopify_domain)
+        products = shoppy.getProducts(params={'limit': 250})
+        #Make the cache expire after 24 hours
+        redis_con.setex('%s:products' % shop.myshopify_domain, products, (24 * 60 * 60))
+
+    return products
