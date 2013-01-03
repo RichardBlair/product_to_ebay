@@ -82,12 +82,19 @@ class RootView(TemplateView):
             ebay_settings.session_id = ebay.GetSessionID(RuName=settings.EBAY_RU_NAME).SessionID
             ebay_settings.save()
 
+        shoppy = Shoppy(access_token=self.request.user.access_token,
+                shop=self.request.user.myshopify_domain)
+        products = shoppy.getProducts(params={'limit': 250})
+
         return {
                 'ebay_settings': ebay_settings,
                 'ebay_ru_name': settings.EBAY_RU_NAME,
                 'shopify_products': products
             }
 
+
+class ListProductsView(View):
+    pass
 
 def get_products(shop):
     redis_con = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,

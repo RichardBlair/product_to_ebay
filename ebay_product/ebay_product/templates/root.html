@@ -1,11 +1,55 @@
 <html>
     <head>
-        <title>Publish Products to eBay!</title>
+        <title>List Products on eBay!</title>
+
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     </head>
     <body>
         {% if ebay_settings.token == None %}
             <p><a href="https://signin.sandbox.ebay.com/ws/eBayISAPI.dll?SignIn&RuName={{ebay_ru_name}}&SessID={{ebay_settings.session_id}}">Click Here</a> to setup your eBay account.</p>
         {% endif %}        
-        {{ shopify_products }}
+        <div class="container">
+            {% for product in shopify_products.products %}
+                <input type="hidden" value={{product.id}}></input>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="5"><h4>{{ product.title }}</h4></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>SKU</th>
+                            <th>Title</th>
+                            <th>Inventory Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    {% for variant in product.variants %}
+                        <tr>
+                            <td>
+                                <label class="checkbox">
+                                    <input type="checkbox" value="{{variant.id}}">
+                                </label>
+                            </td>
+                            <td>
+                                {{variant.sku}}
+                            </td>
+                            <td>
+                                {{variant.title}}
+                            </td>
+                            <td>
+                                {{variant.inventory_quantity}}
+                            </td>
+                            <td>
+                                {{variant.price}}
+                            </td>
+                        </tr>        
+                    {% endfor %}
+                </table>
+                <button class="btn btn-primary" type="button">List</button>
+            {% endfor %}
+        <div>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     </body>
 </html>
