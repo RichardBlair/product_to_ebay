@@ -41,6 +41,7 @@ class InstallView(View):
 
 
 class EbayAuthView(View):
+    """View that will handle the eBay auth call back and get the auth token"""
 
     def get(self, request, *args, **kwargs):
         try:
@@ -61,6 +62,11 @@ class EbayAuthView(View):
 
 
 class RootView(TemplateView):
+    """
+    Display products that can be published and ask for ebay auth if we do not
+    yet have ebay info.
+    """
+
     template_name = 'root.html'
 
     def get_context_data(self, **kwargs):
