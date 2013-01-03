@@ -75,15 +75,6 @@ class ShopifyView(View, ShopifyMixin):
             return HttpResponseRedirect(redirect_url)
 
 
-class InstallView(View):
-    """
-    This view will create the charge.
-    """
-
-    def get(self, request, *args, **kwargs):
-        return HttpResponse()
-
-
 class AuthView(View, ShopifyMixin):
     """
     This endpoint will begin the process of requesting an oauth token from
@@ -154,6 +145,6 @@ class AuthCallbackView(View, ShopifyMixin):
                 return HttpResponseForbidden()
             login(request, shop)
 
-            return HttpResponseRedirect(reverse('shopify.install'))
+            return HttpResponseRedirect(reverse('install'))
         except KeyError:
             return HttpResponseForbidden()
