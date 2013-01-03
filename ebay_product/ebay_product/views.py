@@ -82,8 +82,6 @@ class RootView(TemplateView):
             ebay_settings.session_id = ebay.GetSessionID(RuName=settings.EBAY_RU_NAME).SessionID
             ebay_settings.save()
 
-        products = get_products(self.request.user)
-
         return {
                 'ebay_settings': ebay_settings,
                 'ebay_ru_name': settings.EBAY_RU_NAME,
