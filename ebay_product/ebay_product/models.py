@@ -4,7 +4,9 @@ from shopify.models import Shop
 
 
 class EbaySettings(models.Model):
-    token = models.CharField(max_length=200)
+    token = models.TextField(max_length=200, blank=True, null=True)
+    session_id = models.CharField(max_length=200)
+    token_expires = models.DateTimeField(blank=True, null=True)
     shop = models.ForeignKey(Shop)
 
 

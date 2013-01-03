@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View, TemplateView
 from django.core.urlresolvers import reverse
@@ -40,22 +40,43 @@ class InstallView(View):
             return HttpResponseRedirect(charge_resp['recurring_application_charge']['confirmation_url'])
 
 
+class EbayAuthView(View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            ebay_settings = EbaySettings.objects.get(shop=self.request.user)
+        except EbaySettings.DoesNotExist:
+            return HttpResponseRedirect(reverse('root'))
+
+        ebay = EbaySuds(token=None, sandbox=True, app_id=settings.EBAY_APP_ID,
+                site_id=settings.EBAY_SITE_ID, dev_id=settings.EBAY_DEV_ID,
+                cert_id=settings.EBAY_CERT_ID)
+
+        token = ebay.FetchToken(SessionID=ebay_settings.session_id)
+        ebay_settings.token = token.eBayAuthToken
+        ebay_settings.token_expires = token.HardExpirationTime
+        ebay_settings.save()
+
+        return HttpResponseRedirect(reverse('root'))
+
+
 class RootView(TemplateView):
     template_name = 'root.html'
 
     def get_context_data(self, **kwargs):
         try:
             ebay_settings = EbaySettings.objects.get(shop=self.request.user)
-            ebay_sessionid = None
         except EbaySettings.DoesNotExist:
-            ebay_settings = None
+            ebay_settings = EbaySettings(shop=self.request.user)
+
+        if ebay_settings.token is None:
             ebay = EbaySuds(token=None, sandbox=True, app_id=settings.EBAY_APP_ID,
                     site_id=settings.EBAY_SITE_ID, dev_id=settings.EBAY_DEV_ID,
                     cert_id=settings.EBAY_CERT_ID)
-            ebay_sessionid = ebay.GetSessionID(RuName=settings.EBAY_RU_NAME)
+            ebay_settings.session_id = ebay.GetSessionID(RuName=settings.EBAY_RU_NAME).SessionID
+            ebay_settings.save()
 
         return {
                 'ebay_settings': ebay_settings,
-                'ebay_sessionid': ebay_sessionid,
                 'ebay_ru_name': settings.EBAY_RU_NAME
             }
